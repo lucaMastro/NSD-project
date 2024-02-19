@@ -8,8 +8,6 @@ net add interface swp4 bridge access 20
 net add interface swp1 ip add 10.2.1.1/30
 net add interface swp2 ip add 10.2.2.1/30
 net add loopback lo ip add 2.2.2.2/32
-net add vlan 10 ip address 192.168.0.254/24
-net add vlan 20 ip address 192.168.1.254/24
 
 
 #OPSF:
@@ -38,4 +36,3 @@ net add bgp evpn neighbor swp1 activate
 net add bgp evpn neighbor swp2 activate
 net add bgp evpn advertise-all-vni
 net commit
-
