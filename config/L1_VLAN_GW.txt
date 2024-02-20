@@ -3,9 +3,9 @@ net add bridge bridge ports swp3,swp4,swp5
 net add interface swp3 bridge access 10
 net add interface swp4 bridge access 20
 net add interface swp5 bridge access 30
-net add interface swp5 bridge access 40
+#net add interface swp5 bridge access 40 (non posso avere due vlan id in access sulla stessa porta)
 
-
+ 
 #IP addresses:
 net add interface swp1 ip add 10.1.1.1/30
 net add interface swp2 ip add 10.1.2.1/30
