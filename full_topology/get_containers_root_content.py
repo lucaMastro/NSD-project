@@ -75,7 +75,7 @@ if __name__ == "__main__":
 
     for c in containers:
         sentinel = f"IM_{c.upper()}"
-        command = f"find / -name {sentinel} 2>/dev/null"
+        command = f"find / -name .{sentinel} 2>/dev/null"
         path = search_path(host, port, username, password, command)
         path = path[: path.find(sentinel)]
 
