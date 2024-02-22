@@ -49,12 +49,12 @@ net add bgp evpn advertise-all-vni
 #L3VNI:
 net add vlan 50
 net add vxlan vni-1000 vxlan id 1000
-net add vxlan vni-1000 vxlan local-tunnelip 1.1.1.1
+net add vxlan vni-1000 vxlan local-tunnelip 2.2.2.2
 net add vxlan vni-1000 bridge access 50
 
 net add vlan 60
 net add vxlan vni-2000 vxlan id 2000
-net add vxlan vni-2000 vxlan local-tunnelip 1.1.1.1
+net add vxlan vni-2000 vxlan local-tunnelip 2.2.2.2
 net add vxlan vni-2000 bridge access 60
 
 
