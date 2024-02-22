@@ -1,0 +1,8 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhistcnt =6
+let g:netrw_dirhist_6='/root/CA/ccd'
+let g:netrw_dirhist_5='/root/CA'
+let g:netrw_dirhist_4='/root/CA/gw_client'
+let g:netrw_dirhist_3='/root/CA'
+let g:netrw_dirhist_2='/root/CA/gw_client'
+let g:netrw_dirhist_1='/root/CA'
