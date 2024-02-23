@@ -66,6 +66,7 @@ if __name__ == "__main__":
         "A2",
         "B1",
         "B2",
+        "C1",
     ]
 
     host = "192.168.56.101"
@@ -74,8 +75,8 @@ if __name__ == "__main__":
     password = "gns3"
 
     for c in containers:
-        sentinel = f"IM_{c.upper()}"
-        command = f"find / -name .{sentinel} 2>/dev/null"
+        sentinel = f".IM_{c.upper()}"
+        command = f"find / -name {sentinel} 2>/dev/null"
         path = search_path(host, port, username, password, command)
         path = path[: path.find(sentinel)]
 
