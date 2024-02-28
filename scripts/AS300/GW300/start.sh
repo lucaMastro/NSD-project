@@ -16,11 +16,6 @@ ip link set eth0.200 up
 ip route add 192.168.0.0/24 via 10.1.3.1 dev eth0.100
 ip route add 192.168.1.0/24 via 10.1.3.1 dev eth0.200
 
-# creo la cartella per le configurazioni ovpn:
-mkdir -p /root/CA/ccd
-cp /root/ovpn_conf/gw_client /root/CA/ccd
-cp /root/ovpn_conf/server.ovpn /root/CA/server
-
 # avvia openvpn
 openvpn /root/CA/server/server.ovpn &
 
