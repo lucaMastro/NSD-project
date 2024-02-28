@@ -16,21 +16,24 @@ Progetto per il corso di _Network and System Defence_.
 ## Indice
 
 1. [AS100](#AS100)
-    1 [R101](#R101)
-    1 [R102](#R102)
-    1 [R103](#R103)
+    1. [R101](#R101)
+    1. [R102](#R102)
+    1. [R103](#R103)
 
 1. [AS200](#AS200)
     1. [R201](#R201)
     1. [R202](#R202)
     1. [R203](#R203)
     1. [Client-200](#Client-200)
+        1. [Open VPN](#OpenVPN)
         1. [MAC - AppArmor](#MAC-AppArmor)
 
 1. [AS300](#AS300)
     1. [R301](#R301)
     2. [R302](#R302)
     3. [GW300](#GW300)
+        1. [Open VPN](#OpenVPN)
+
     4.  [Datacenter](#Datacenter)
         1. [Spine](#Spine)
             1. [S1](#S1)
@@ -47,6 +50,7 @@ Progetto per il corso di _Network and System Defence_.
 1. [AS400](#AS400)
     1. [R401](#R401)
     2. [R402](#R402)
+        1. [Open VPN](#OpenVPN)
     1. [Client-400](#Client-400)
 
 # AS100
@@ -391,6 +395,36 @@ sudo ip addr add 10.0.0.1/24 dev enp0s8
 sudo ip route add default via 10.0.0.2
 ```
 
+### OpenVPN
+Il client 200 deve essere configurato per agire come un client OpenVPN. Per far questo, è necessario del materiale crittografico:
+- certificato del client
+- chiave privata del client
+- certificato della _certification authority_
+
+Tutto il materiale crittografico è, nel nostro caso, generato dal [gateway 300](#gw300), che svolge il ruolo di server OpenVPN. 
+
+Inoltre, è necessario definire un file di configurazione `.ovpn`, che per il client-200 è il seguente:
+
+```ovpn
+client
+dev tun
+proto udp
+remote 3.2.0.2 1194
+resolv-retry infinite
+ca /root/ovpn/ca.crt
+cert /root/ovpn/client-200.crt
+key /root/ovpn/client-200.key
+remote-cert-tls server
+cipher AES-256-GCM
+```
+
+Con questo file specifichiamo che si agisce come client e si partecipa a una overlay VPN di livello 3. È necessario specificare i path al materiale crittografico sopra citato.
+
+
+Per iniziare la connessione openvpn, si utilizza il comando:
+```bash
+openvpn /root/ovpn/client-200.ovpn
+```
 
 ### MAC-AppArmor
 
@@ -611,7 +645,82 @@ iptables -A FORWARD -i eth0.200 -d 192.168.0.0/24 -j DROP
 iptables -A FORWARD -i eth0.100 -d 192.168.1.0/24 -j DROP
 ```
 
+### OpenVPN
 
+Inizializzazione della PKI:
+```bash
+./easyrsa init-pki
+./easyrsa build-ca nopass
+```
+
+Generazione del certificato del server e relativa chiave privata:
+```bash
+./easyrsa build-server-full server nopass
+```
+
+Generazione dei certificati e relative chiavi private per i client:
+```bash
+./easyrsa build-client-full client-200 nopass
+./easyrsa build-client-full client-R402 nopass
+```
+
+Generazione dei parametri Diffie-Helman:
+```bash
+./easyrsa gen-dh
+```
+Il materiale crittografico dei client generato in questo processo viene distribuito opportunamente sui vari end-host.
+
+La overlay VPN mette in comunicazione l'end-host client-200, la rete `192.168.2.0/24` e la rete `192.168.0.0/24` del tenant A della DC network. In particolare, si è scelto di rendere le macchine del tenant A accessibili tramite OVPN ai nodi della rete virtuale ma non il viceversa. Per raggiungere questo scopo, sul GW300 sono state aggiunte le seguenti regole:
+
+```bash
+iptables -A FORWARD -m state --state ESTABLISHED -j ACCEPT
+iptables -A FORWARD -i eth0.100 -d 192.168.100.0/24 -j DROP
+iptables -A FORWARD -i eth0.100 -d 192.168.2.0/24 -j DROP
+```
+
+Per realizzare questo, il file di configurazione usato è il seguente:
+
+```
+port 1194
+proto udp
+dev tun
+ca /root/CA/ca.crt
+cert /root/CA/server/server.crt
+key /root/CA/server/server.key
+dh /root/CA/server/dh.pem
+server 192.168.100.0 255.255.255.0
+push "route 192.168.2.0 255.255.255.0"
+push "route 192.168.0.0 255.255.255.0"
+route 192.168.2.0 255.255.255.0
+client-config-dir /root/CA/ccd
+client-to-client
+keepalive 10 120
+cipher AES-256-GCM
+```
+
+In questo file è specificata la rete overlay e la relativa maschera di rete. Con i vari `push`, il server comunica ai client l'esistenza delle sottoreti specificate. In questo modo, un client può comunicare con le altre reti private mediante l'indirizzo privato diffuso in questo modo. 
+
+Infine, si specifica la `client-config-dir` che conterrà i file di configurazione per i vari client. Nel nostro caso, la cartella `/root/CA/ccd` contiene i seguenti file:
+
+- client-200:
+  ```
+  ifconfig-push 192.168.100.5 192.168.100.6
+  ```
+
+- client-R402:
+  ```
+  ifconfig-push 192.168.100.9 192.168.100.10
+  iroute 192.168.2.0 255.255.255.0
+  ```
+
+Con i comandi `ifconfig-push` si specifica l'indirizzo virtuale statico che si vuole assegnareai vari client, mentre con `iroute` si specificano le rotte da installare nella routing table di overlay.
+
+Infine, poiché le m
+
+Per avviare il server OVPN, si utilizza il comando:
+```bash
+openvpn /root/CA/server/server.ovpn
+```
 
 ## Datacenter
 
@@ -951,6 +1060,37 @@ ip route add default via 4.1.0.1
 iptables -A POSTROUTING -t nat -o eth1 -j MASQUERADE
 ```
 
+### OpenVPN
+Il router R402 deve essere configurato per agire come un client OpenVPN. Essendo un access gateway per una LAN, tutti i client dietro di esso parteciperanno alla overlay VPN senza necessità di configurazioni aggiuntive.
+
+Per far questo, è necessario del materiale crittografico all'interno di R402:
+- certificato del client
+- chiave privata del client
+- certificato della _certification authority_
+
+Tutto il materiale crittografico è, nel nostro caso, generato dal [gateway 300](#gw300), che svolge il ruolo di server OpenVPN. 
+
+Inoltre, è necessario definire un file di configurazione `.ovpn`, che per il router R402 è il seguente:
+
+```ovpn
+client
+dev tun
+proto udp
+remote 3.2.0.2 1194
+resolv-retry infinite
+ca /root/ovpn/ca.crt
+cert /root/ovpn/client-R402.crt
+key /root/ovpn/client-R402.key
+remote-cert-tls server
+cipher AES-256-GCM
+```
+
+Con questo file specifichiamo che si agisce come client e si partecipa a una overlay VPN di livello 3. È necessario specificare i path al materiale crittografico sopra citato.
+
+Per iniziare la connessione openvpn, si utilizza il comando:
+```bash
+openvpn /root/ovpn/client-R402.ovpn
+```
 
 ## Client-400
 La configurazione delle interfacce è la seguente:
