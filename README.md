@@ -35,7 +35,7 @@ Progetto per il corso di _Network and System Defence_.
         1. [Spine](#Spine)
             1. [S1](#S1)
             2. [S2](#S2)
-        3. [Foglie](##Foglie)
+        3. [Foglie](#Foglie)
             1. [L1](#L1)
             2. [L2](#L2)
         5. [Tenants](#Tenants)
