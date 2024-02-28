@@ -25,14 +25,14 @@ Progetto per il corso di _Network and System Defence_.
     1. [R202](#R202)
     1. [R203](#R203)
     1. [Client-200](#Client-200)
-        1. [Open VPN](#OpenVPN)
+        1. [Open VPN](#openvpn)
         1. [MAC - AppArmor](#MAC-AppArmor)
 
 1. [AS300](#AS300)
     1. [R301](#R301)
     2. [R302](#R302)
     3. [GW300](#GW300)
-        1. [Open VPN](#OpenVPN)
+        1. [Open VPN](#openvpn-1)
 
     4.  [Datacenter](#Datacenter)
         1. [Spine](#Spine)
@@ -50,7 +50,7 @@ Progetto per il corso di _Network and System Defence_.
 1. [AS400](#AS400)
     1. [R401](#R401)
     2. [R402](#R402)
-        1. [Open VPN](#OpenVPN)
+        1. [Open VPN](#openvpn-2)
     1. [Client-400](#Client-400)
 
 # AS100
@@ -1068,7 +1068,7 @@ Per far questo, è necessario del materiale crittografico all'interno di R402:
 - chiave privata del client
 - certificato della _certification authority_
 
-Tutto il materiale crittografico è, nel nostro caso, generato dal [gateway 300](#gw300), che svolge il ruolo di server OpenVPN. 
+Tutto il materiale crittografico è, nel nostro caso, generato dal [gateway 300](#openvpn-1), che svolge il ruolo di server OpenVPN. 
 
 Inoltre, è necessario definire un file di configurazione `.ovpn`, che per il router R402 è il seguente:
 
