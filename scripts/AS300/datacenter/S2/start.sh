@@ -10,7 +10,7 @@ net add interface swp2 ip add 10.2.2.2/30
 net add loopback lo ip add 4.4.4.4/32
 
 
-#OPSF:
+#OSPF:
 net add ospf router-id 4.4.4.4
 net add ospf network 0.0.0.0/0 area 0
 
