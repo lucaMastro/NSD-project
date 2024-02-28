@@ -401,7 +401,7 @@ Il client 200 deve essere configurato per agire come un client OpenVPN. Per far 
 - chiave privata del client
 - certificato della _certification authority_
 
-Tutto il materiale crittografico è, nel nostro caso, generato dal [gateway 300](#gw300), che svolge il ruolo di server OpenVPN. 
+Tutto il materiale crittografico è, nel nostro caso, generato dal [gateway 300](#openvpn-1), che svolge il ruolo di server OpenVPN. 
 
 Inoltre, è necessario definire un file di configurazione `.ovpn`, che per il client-200 è il seguente:
 
