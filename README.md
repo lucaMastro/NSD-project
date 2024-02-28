@@ -16,9 +16,9 @@ Progetto per il corso di _Network and System Defence_.
 ## Indice
 
 1. [AS100](#AS100)
-    1.1 [R101](#R101)
-    1.2 [R102](#R102)
-    1.3 [R103](#R103)
+    1 [R101](#R101)
+    1 [R102](#R102)
+    1 [R103](#R103)
 
 1. [AS200](#AS200)
     1. [R201](#R201)
