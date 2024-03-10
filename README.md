@@ -715,8 +715,6 @@ Infine, si specifica la `client-config-dir` che conterrà i file di configurazio
 
 Con i comandi `ifconfig-push` si specifica l'indirizzo virtuale statico che si vuole assegnareai vari client, mentre con `iroute` si specificano le rotte da installare nella routing table di overlay.
 
-Infine, poiché le m
-
 Per avviare il server OVPN, si utilizza il comando:
 ```bash
 openvpn /root/CA/server/server.ovpn
