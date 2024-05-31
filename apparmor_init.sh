@@ -14,6 +14,13 @@ useradd -m -s /bin/nsduser_bash nsd_user
 echo "setting password for new user; use something easy: "
 passwd nsd_user
 
+mkdir -p /home/nsd_user/super_secrets/read_only/ /home/nsd_user/super_secrets/write_only/
+echo "super secret content" > /home/nsd_user/super_secrets/read_only/super_secret_file.txt
+chown nsd_user:nsd_user /home/nsd_user/super_secrets
+chown nsd_user:nsd_user /home/nsd_user/super_secrets/read_only
+chown nsd_user:nsd_user /home/nsd_user/super_secrets/read_only/super_secret_file.txt
+chown nsd_user:nsd_user /home/nsd_user/super_secrets/write_only
+
 cat <<EOF > /etc/apparmor.d/usr.bin.nsduser_bash
 # Last Modified: Mon Feb 26 15:37:04 2024
 abi <abi/3.0>,
